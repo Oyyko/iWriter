@@ -1,5 +1,5 @@
 #include "markdown.hpp"
-
+#include <fstream>
 class Options
 {
 private:
@@ -88,5 +88,19 @@ int main(int argc, char *argv[])
             std::cerr << "Reading successfully!\n";
         }
         Document doc(fs);
+        string catalog{doc.get_catalog()};
+        string html_text{doc.get_html_text()};
+        cout << catalog + html_text;
+        ofstream out;
+        out.open("index.html", fstream::out);
+        std::string head = "<!DOCTYPE html><html><head>\
+        <meta charset=\"utf-8\">\
+        <title>Markdown</title>\
+        <link rel=\"stylesheet\" href=\"github-markdown.css\">\
+        </head><body><article class=\"markdown-body\">";
+        std::string end = "</article></body></html>";
+        out << head + catalog + html_text + end;
+        out.close();
+        return 0;
     }
 }
