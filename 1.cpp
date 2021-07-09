@@ -28,6 +28,25 @@ bool Options::read_options(int argc, char *argv[])
             {
                 help = true;
             }
+            else if (option == "set")
+            {
+                std::string username(argv[i + 1]);
+                std::string password(argv[i + 2]);
+                i = i + 2;
+                string script = "ftp -n <<- EOF\n\n"
+                                "open home.ustc.edu.cn\n\n"
+                                "user " +
+                                username + " " + password + "\n\n"
+                                                            "binary\n\n"
+                                                            "cd /public_html\n\n"
+                                                            "put index.html\n\n"
+                                                            "put github-markdown.css\n\n"
+                                                            "bye\n\n"
+                                                            "EOF\n";
+                ofstream of("upload.sh", fstream::out);
+                of << script;
+                of.close();
+            }
             else
             {
                 error = true;
@@ -62,9 +81,12 @@ void Options::show_help()
         "    trans [<option>...] [input-file]\n"
         "\n"
         "Available options are:\n"
-        "    --help      Show help.\n";
-    std::cerr << std::endl
-              << help_text << std::endl;
+        "    --help      Show help.\n"
+        "    --set aaa bbb \n"
+        "               Set your username as aaa, password as bbb\n";
+    std::cerr
+        << std::endl
+        << help_text << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -90,7 +112,6 @@ int main(int argc, char *argv[])
         Document doc(fs);
         string catalog{doc.get_catalog()};
         string html_text{doc.get_html_text()};
-        cout << catalog + html_text;
         ofstream out;
         out.open("index.html", fstream::out);
         std::string head = "<!DOCTYPE html><html><head>\
@@ -101,6 +122,8 @@ int main(int argc, char *argv[])
         std::string end = "</article></body></html>";
         out << head + catalog + html_text + end;
         out.close();
+        system("./upload.sh");
+        cout << "Sucessfully executed!\n";
         return 0;
     }
 }
