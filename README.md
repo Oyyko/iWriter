@@ -21,6 +21,6 @@ Available options are:
 ```
 
 For example, 
-`./iWriter --set john 123456` means that set the `username` as `john` and set the `password` as `123456`
+`./iWriter --set john 123456` means setting the `username` as `john` and setting the `password` as `123456`
 
 `./iWriter doc.md` means translate `doc.md` as `index.html` and then upload it.
